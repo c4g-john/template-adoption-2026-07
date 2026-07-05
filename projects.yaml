@@ -6,3 +6,8 @@ projects:
   name: Demo — Replace Me With Your First Project
   sponsor: your.name
   status: proposed
+- id: PRJ-002-AUR
+  code: AUR
+  name: Aurora — Customer Onboarding
+  sponsor: john.tanner
+  status: proposed

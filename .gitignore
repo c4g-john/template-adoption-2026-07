@@ -1,0 +1,8 @@
+# generated locally by docassert (CI regenerates its own)
+_site/
+docassert-comment.md
+docassert-report.xml
+RTM.md
+
+# macOS
+.DS_Store

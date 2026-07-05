@@ -1,0 +1,38 @@
+name: bridge scaffold (optional)
+
+# The execution bridge: turns APPROVED user stories into Feature issues with
+# Story sub-issues, in this repo, using only the built-in token. Dormant until
+# you set the repository variable BRIDGE_ENABLED to 'true'.
+#
+# Scope flows one way: documents -> issues. The bridge never edits documents,
+# and scope changes go through document pull requests. To also mirror items
+# onto a Projects v2 board, see the guide on the PMO as Code site (a classic
+# PAT with only the `project` scope is required for boards).
+on:
+  push:
+    branches: [main]
+    paths: ["documents/**"]
+  schedule:
+    - cron: "7 8 * * *"
+  workflow_dispatch:
+
+permissions:
+  contents: read
+  issues: write
+
+jobs:
+  scaffold:
+    if: vars.BRIDGE_ENABLED == 'true'
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@9c091bb21b7c1c1d1991bb908d89e4e9dddfe3e0 # v7.0.0
+      - uses: actions/setup-python@ece7cb06caefa5fff74198d8649806c4678c61a1 # v6.3.0
+        with:
+          python-version: "3.12"
+      - uses: c4g-john/docassert-action/install@v1
+      - name: Scaffold Features and Stories from approved documents
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          docassert bridge scaffold --repo "$GITHUB_REPOSITORY" \
+            --docs-url "https://github.com/$GITHUB_REPOSITORY/blob/main"

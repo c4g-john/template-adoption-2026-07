@@ -1,0 +1,30 @@
+name: bridge reconcile (optional)
+
+# Polices the issues against the governing documents: anything without a
+# matching approved item gets labelled and alerted, and a pinned Scope report
+# stays current. Dormant until BRIDGE_ENABLED is 'true'.
+on:
+  issues:
+    types: [opened, reopened, edited]
+  schedule:
+    - cron: "37 7 * * *"
+  workflow_dispatch:
+
+permissions:
+  contents: read
+  issues: write
+
+jobs:
+  reconcile:
+    if: vars.BRIDGE_ENABLED == 'true' && github.actor != 'github-actions[bot]'
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@9c091bb21b7c1c1d1991bb908d89e4e9dddfe3e0 # v7.0.0
+      - uses: actions/setup-python@ece7cb06caefa5fff74198d8649806c4678c61a1 # v6.3.0
+        with:
+          python-version: "3.12"
+      - uses: c4g-john/docassert-action/install@v1
+      - name: Reconcile issues against the documents
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: docassert bridge reconcile --repo "$GITHUB_REPOSITORY"

@@ -4,6 +4,9 @@ name: bridge reconcile (optional)
 # matching approved item gets labelled and alerted, and a pinned Scope report
 # stays current. Dormant until BRIDGE_ENABLED is 'true'.
 on:
+  workflow_run:
+    workflows: ["bridge scaffold (optional)"]
+    types: [completed]
   push:
     branches: [main]
     paths: ["documents/**"]
@@ -19,7 +22,7 @@ permissions:
 
 jobs:
   reconcile:
-    if: vars.BRIDGE_ENABLED == 'true' && (github.event_name != 'issues' || github.actor != 'github-actions[bot]')
+    if: (vars.BRIDGE_ENABLED == 'true' && (github.event_name != 'issues' || github.actor != 'github-actions[bot]')) && (github.event_name != 'workflow_run' || github.event.workflow_run.conclusion == 'success')
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1

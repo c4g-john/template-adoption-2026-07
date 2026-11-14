@@ -12,8 +12,8 @@ on:
   push:
     branches: [main]
     paths: ["documents/**"]
-  schedule:
-    - cron: "7 8 * * *"
+  repository_dispatch:
+    types: [bridge-scaffold]
   workflow_dispatch:
 
 permissions:
